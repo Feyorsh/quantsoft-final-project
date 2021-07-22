@@ -13,10 +13,9 @@
 
         use (register, ancilla) = (Qubit[regsize], Qubit()) {
             for i in 0..shots-1 {
-                ApplyToEach(H, register); // P
                 Rop(register, ancilla, bmax);
 
-                for j in 0..iterations {
+                for j in 0..iterations-1 {
                     Q_Grover(register, ancilla, bmax);
                 }
 
@@ -46,27 +45,36 @@
 
     operation Rop (register: Qubit[], ancilla: Qubit, bmax: Double) : Unit is Adj + Ctl { // This is supposed to be the unitary A operator... an oracle of sorts.
         let len = Length(register);
+        ApplyToEachCA(H, register);
         Ry(bmax / IntAsDouble(2^len), ancilla);
         for i in 0..len-1 {
             Controlled Ry([register[i]], (bmax / IntAsDouble(2^(len-1-i)), ancilla));
         }
+
+        //Controlled Z(register, ancilla);
     }
 
     operation Q_Grover(register: Qubit[], ancilla: Qubit, bmax: Double) : Unit is Ctl {
+        // S_x
         Z(ancilla);
-        // U_I
+
+        // A^-1
         Adjoint Rop(register, ancilla, bmax);
-        ApplyToEachC(H, register);
 
-        X(ancilla);
-        ApplyToEachC(X, register);
-        H(ancilla);
-        Controlled X(register, ancilla);
-        H(ancilla);
-        ApplyToEachC(X, register);
-        X(ancilla);
+        // 0-Controlled Z, S_0
+        ApplyToEachC(X, register+[ancilla]);
+        Controlled Z(register, ancilla);
+        ApplyToEachC(X, register+[ancilla]);
 
-        ApplyToEachC(H, register);
+        //X(ancilla);
+        //ApplyToEachC(X, register);
+        //H(ancilla);
+        //Controlled X(register, ancilla);
+        //H(ancilla);
+        //ApplyToEachC(X, register);
+        //X(ancilla);
+
+        // A
         Rop(register, ancilla, bmax);
     }
 }
