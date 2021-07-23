@@ -4,13 +4,15 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>aaab9159-f909-4ef2-9059-f50d442a6e24</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Qiskit_Implementations.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Qiskit_Implementations</Name>
     <RootNamespace>Qiskit_Implementations</RootNamespace>
+    <InterpreterId>CondaEnv|CondaEnv|qiskit-env</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +23,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Qiskit_Implementations.py" />
+    <InterpreterReference Include="CondaEnv|CondaEnv|qiskit-env" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="amplitudeEstimation.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
