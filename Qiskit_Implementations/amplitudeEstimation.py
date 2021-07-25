@@ -4,15 +4,17 @@ from qiskit import Aer
 
 import math
 
-def runit():
-    iterations = 7
+def amplitudeEstimation():
+    iterations = 15
     shots = 500
-    qsize = 2
+    qsize = 4
     exponential = False
 
-    A = intSinQq
+    sim = Aer.get_backend('aer_simulator')
+
+    A = intSinSq
     Aadj = AintSinSq
-    args = [math.pi / 4, 1]
+    args = [85.6 * math.pi / 4, 1]
 
     register = QuantumRegister(qsize)
     target = QuantumRegister(1)
@@ -22,7 +24,7 @@ def runit():
     A(circ, register, target, args)
     circ.measure(target, measure)
 
-    prob = run(circ, shots)
+    prob = run(circ, shots, sim)
     thetprev = math.asin(math.sqrt(prob))
 
     for i in range(1, iterations+1):
@@ -37,7 +39,7 @@ def runit():
             Q_Grover(circ, register, target, A, Aadj, args)
         circ.measure(target, measure)
 
-        prob = run(circ, shots)
+        prob = run(circ, shots, sim)
         theta = math.asin(math.sqrt(prob))
         solns = [theta, math.pi - theta, math.pi + theta, 2 * math.pi - theta]
 
@@ -55,24 +57,28 @@ def runit():
 
         thetprev = closest
 
-    print("Probability is: " + (math.sin(thetprev)**2))
+    print("Probability is: " + str(math.sin(thetprev)**2))
+
+def run(circuit, shots, simulator):
+    result = execute(circuit, simulator, shots=shots).result()
+    counts = result.get_counts(circuit)
+
+    return counts['1'] / shots
 
 
-
-
-
-def amplitudeEstimation (circuit, qregister, ancilla, cregister, iterations, shots, A, args):
+"""
+def amplitudeEstimation(circuit, qregister, ancilla, cregister, iterations, shots, A, args):
     # from "Quantum amplitude estimation algorithms on IBM quantum devices" Rao et al. with methods from Suzuki et al.
     # https://arxiv.org/pdf/2008.02102.pdf
     
     if iterations == 0:
-        A(circuit, register, ancilla, args)
+        A(circuit, qregister, ancilla, args)
 
 
     for j in range(iterations):
         # Q = A S_0 A^-1 S_x
         # note: because quantum operations are like matrices, operations are applied right-to-left
-        Q_Grover(circuit, register, ancilla, A, args)
+        Q_Grover(circuit, qregister, ancilla, A, args)
     
     # measure ancilla into "measurement" after iterations of Q_Grover
     circuit.measure(ancilla, measurement)
@@ -88,40 +94,41 @@ def amplitudeEstimation (circuit, qregister, ancilla, cregister, iterations, sho
             onesMeasured = count
 
     return onesMeasured
-
-
 """
-# Summary
-Unitary operator that computes the definite integral of sin^2(x) from 0 to b with a Riemann sum.
 
-# Input
-## register
-Qubit register -- The Riemann sum uses 2^n subintervals, where n is the length of the qubit register. 
-## ancilla
-Ancilla qubit
-## args
-1st argument should be upper bound of the integral, and 2nd argument should be 0, 0.5 or 1 for left, midpoint, or right Riemann sum, respectively (defaults to left Riemann sum).
-"""
-def intSinSq (circuit, register, ancilla, args):
+def intSinSq(circuit, register, ancilla, args):
+    """
+    # Summary
+    Unitary operator that computes the definite integral of sin^2(x) from 0 to b with a Riemann sum.
+
+    # Input
+    ## register
+    Qubit register -- The Riemann sum uses 2^n subintervals, where n is the length of the qubit register. 
+    ## ancilla
+    Ancilla qubit
+    ## args
+    1st argument should be upper bound of the integral, and 2nd argument should be 0, 0.5 or 1 for left, midpoint, or right Riemann sum, respectively (defaults to left Riemann sum).
+    """
+    
     length = len(register)
     bmax = args[0]
 
     circuit.h(register)
     if args[1] == 0.5 or args[1] == 1.0:
-        circuit.ry((args[1] * bmax) / IntAsDouble(2^length), ancilla)
+        circuit.ry((args[1] * bmax) / (2**length), ancilla)
 
     for i in range(length):
-        circuit.cry((bmax / IntAsDouble(2^(length-1-i)), register[i], ancilla))
+        circuit.cry(bmax / (2**(length-1-i)), register[i], ancilla)
 
-def AintSinSq (circuit, register, ancilla, args):
+def AintSinSq(circuit, register, ancilla, args):
     length = len(register)
     bmax = args[0]
 
-    for i in range(0, length, -1):
-        circuit.cry((-bmax / IntAsDouble(2^(length-1-i)), register[i], ancilla))
+    for i in reversed(range(length)):
+        circuit.cry(-bmax / (2**(length-1-i)), register[i], ancilla)
 
     if args[1] == 0.5 or args[1] == 1.0:
-        circuit.ry((-args[1] * bmax) / IntAsDouble(2^length), ancilla)
+        circuit.ry((-args[1] * bmax) / (2**length), ancilla)
     circuit.h(register)
 
 
@@ -143,3 +150,5 @@ def Q_Grover(circuit, register, ancilla, A, Aadj, args):
 
     # A
     A(circuit, register, ancilla, args)
+
+amplitudeEstimation()
