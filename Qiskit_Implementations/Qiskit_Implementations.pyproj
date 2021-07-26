@@ -4,15 +4,15 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>aaab9159-f909-4ef2-9059-f50d442a6e24</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>amplitudeEstimation.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Qiskit_Implementations</Name>
     <RootNamespace>Qiskit_Implementations</RootNamespace>
-    <InterpreterId>CondaEnv|CondaEnv|qiskit-env</InterpreterId>
+    <InterpreterId>Global|VisualStudio|qiskit-env</InterpreterId>
+    <SuppressEnvironmentCreationPrompt>True</SuppressEnvironmentCreationPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +23,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <InterpreterReference Include="CondaEnv|CondaEnv|qiskit-env" />
+    <InterpreterReference Include="Global|VisualStudio|qiskit-env" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="amplitudeEstimation.py">

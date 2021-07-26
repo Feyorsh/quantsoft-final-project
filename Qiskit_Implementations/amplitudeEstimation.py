@@ -63,38 +63,10 @@ def run(circuit, shots, simulator):
     result = execute(circuit, simulator, shots=shots).result()
     counts = result.get_counts(circuit)
 
-    return counts['1'] / shots
-
-
-"""
-def amplitudeEstimation(circuit, qregister, ancilla, cregister, iterations, shots, A, args):
-    # from "Quantum amplitude estimation algorithms on IBM quantum devices" Rao et al. with methods from Suzuki et al.
-    # https://arxiv.org/pdf/2008.02102.pdf
-    
-    if iterations == 0:
-        A(circuit, qregister, ancilla, args)
-
-
-    for j in range(iterations):
-        # Q = A S_0 A^-1 S_x
-        # note: because quantum operations are like matrices, operations are applied right-to-left
-        Q_Grover(circuit, qregister, ancilla, A, args)
-    
-    # measure ancilla into "measurement" after iterations of Q_Grover
-    circuit.measure(ancilla, measurement)
-    # set up simulator with "shots" shots
-    simulator = Aer.get_backend('aer_simulator')
-    simulation = execute(circuit, simulator, shots=shots)
-    # get result of measuring it "shots" times, put it indictionary form, unpack in for loop
-    result = simulation.result()
-    counts = result.get_counts(circuit)
-    # measured states will be only 1s and 0s since we only measure the ancilla
-    for(measured_state, count) in counts.items():
-        if measured_state == "1":
-            onesMeasured = count
-
-    return onesMeasured
-"""
+    if '1' in counts.keys():
+        return counts['1'] / shots
+    else:
+        return 0
 
 def intSinSq(circuit, register, ancilla, args):
     """
