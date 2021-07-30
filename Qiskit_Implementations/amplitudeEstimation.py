@@ -1,3 +1,9 @@
+"""
+implementation of Quantum Amplitude Estimation from BWSI 2021.
+For more detailed comments, check QS_Implementations.
+"""
+
+
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 from qiskit import execute
 from qiskit import Aer
@@ -123,4 +129,5 @@ def Q_Grover(circuit, register, ancilla, A, Aadj, args):
     # A
     A(circuit, register, ancilla, args)
 
-amplitudeEstimation()
+if __name__ == "__main__":
+    amplitudeEstimation()

@@ -2,8 +2,10 @@ from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 from qiskit.providers.aer import AerSimulator
 from qiskit import IBMQ
 from qiskit.compiler import transpile
+
 from time import perf_counter
 import math
+import sys
 
 import amplitudeEstimation
 
@@ -96,21 +98,24 @@ def metrics(iters, exponential, sim_name):
     gateCount(circ_ls[-1])
 
     print(f"\nMetrics for transpiled circuit ({sim_name}):\n")
-    new_circs = compileTime(circ_ls, "ibmq_lima")
+    new_circs = compileTime(circ_ls, sim_name)
     print(f"Max depth: {new_circs[-1].depth()}")
     print(f"Max width: {new_circs[-1].width()}")
     gateCount(new_circs[-1])
 
     print("\n")
 
+def main():
+    simulator = sys.argv[1]
+    k_linear = [3, 5, 7]
+    k_exponential = [1, 2, 3]
+
+    for i in k_linear:
+        metrics(i, False, simulator)
+
+    for i in k_exponential:
+        metrics(i, True, simulator)
 
 
-simulator = "ibmq_lima"
-k_linear = [3, 5, 7]
-k_exponential = [1, 2, 3]
-
-for i in k_linear:
-    metrics(i, False, "ibmq_lima")
-
-for i in k_exponential:
-    metrics(i, True, "ibmq_lima")
+if __name__ == "__main__":
+    main()
